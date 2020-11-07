@@ -1,0 +1,66 @@
+## Packages 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readxl)
+```
+
+## Data
+
+```{r }
+dat <- read_excel("dataset_1.xlsx")
+```
+
+## Data Wrangling
+
+```{r }
+# Use grep to filter columns by string
+dat1 <- dat[,grep("gdp|countryname|Region", colnames(dat))]
+
+# Use select to filter columns by index 
+dat2 <- dat %>% select(c(1:70)) 
+
+
+dat3 <- dat2 %>% group_by(Region) %>%
+  # group_by() will apply all subsequent functions to 
+  # specified/all columns except for the grouped-by one 
+  # That is why the alternative will be c(2:69)
+                  summarise_at(vars(starts_with("gdp")),
+                  mean, na.rm = TRUE) %>% 
+                  gather(Year, GDP, starts_with("gdp")) 
+```
+
+## Extra: Remove string pattern
+
+``` {r}
+
+dat4 <- dat3 %>% mutate_at(vars(Year), ~gsub("gdp_pc", "", .))
+
+```
+
+## Extra: Only show every 10th Year in Plot 
+
+```{r}
+library(lubridate)
+dat4$Year <- ymd(dat4$Year, truncated = 2L)
+
+base <- ggplot(dat4, aes(year(Year), y = GDP, col = Region)) + 
+        scale_x_continuous("Year", 
+        labels = as.character(seq(min(year(dat4$Year)),
+        max(year(dat4$Year)), by = 10)), 
+        breaks = seq(min(year(dat4$Year)), 
+        max(year(dat4$Year)), by = 10), 
+        expand=c(0,0))
+```
+
+
+## Data Plotting 
+
+``` {r fig.width = 10, fig.height = 10}
+base + geom_line(size = 1) +
+  labs(title = "Development of average GDP per capita by region",
+  x = "Year", y = "GDP per capita") +
+  geom_point() + theme_minimal()
+``` 
