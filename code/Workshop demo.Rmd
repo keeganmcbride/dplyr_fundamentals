@@ -1,0 +1,115 @@
+---
+title: "Workshop_demo"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Installation
+
+```{r echo = FALSE }
+install.packages("dplyr")
+library(dplyr)
+```
+
+## Data set
+
+``` {r echo = FALSE}
+starwars 
+head(starwars)
+dat <- starwars
+``` 
+
+## Pipe operator 
+
+```{r echo = FALSE}
+# Ugly example 
+
+dat1 <- select(dat, c(name, height, mass))
+dat1_1 <- filter(dat1, height >= 100)
+View(dat1_1)
+
+# Beautiful example 
+
+dat1 <- dat %>% select(name, height, mass) %>% 
+                filter(height >= 100) %>% 
+                View()
+```
+
+
+## select()
+
+```{r echo=FALSE}
+# Select by name of columns 
+dat %>% select(name, mass, hair_color) %>% 
+        View()
+
+# Exclude by name 
+dat %>% select(-mass, -hair_color) %>% 
+        View()
+
+# Select by feature 
+dat %>% select(contains("color")) %>% 
+        View()
+dat %>% select(-ends_with("color")) %>% 
+        # opposite is starts_with()
+        View()
+
+# Reorder 
+dat %>% select(name, hair_color, skin_color, everything()) %>% 
+        View()
+```
+
+## filter() 
+
+``` {r}
+# Filter for numerical values and character values
+dat %>% filter(height >= 100, 
+               eye_color == "yellow") %>% 
+        View()
+
+# Filter for A OR B
+dat %>% filter(height >= 100 | eye_color == "yellow") %>% 
+        View()
+
+# Filter for several values of the same type 
+dat %>% filter(hair_color %in% c("blond", "brown")) %>% 
+        View()
+
+# Filter out cases
+dat %>% filter(!(height >=100)) %>% 
+        View()
+``` 
+
+## arrange()
+
+``` {r}
+# Default is ascending
+dat %>% arrange(mass) %>% 
+        View()
+
+# Descending 
+dat %>% arrange(desc(mass)) %>% 
+        View()
+``` 
+
+
+## mutate() 
+
+``` {r}
+# Constructing a BMI column
+dat$height <- dat$height/100
+dat1 <- dat %>% mutate(BMI = mass/(height^2)) %>% 
+                select(name, BMI, everything()) %>% 
+                View()
+``` 
+
+## group_by()
+
+``` {r}
+
+
+
+``` 
