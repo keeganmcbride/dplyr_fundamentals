@@ -1,18 +1,18 @@
-library(plyr)
 library(dplyr)
+library(plyr)
 library(purrr)
 library(janitor)
 library(knitr)
 library(readxl)
-library(sqldf)
+library(esquisse)
 
-setwd("~/coding/DYPLR fundamentals")
+#setwd("~/coding/dyplr_fundamentals")
 
 #Load one at a time
 
-salary2017 <- read_excel("2017.xlsx")
-salary2018 <- read_excel("2018.xlsx")
-salary2019 <- read_excel("2019.xlsx")
+salary2017 <- read_excel("data/salarydata/2017.xlsx")
+salary2018 <- read_excel("data/salarydata/2018.xlsx")
+salary2019 <- read_excel("data/salarydata/2019.xlsx")
 
 names <- c("organization", "unit", "job", "first_name","last_name","work_percentage","official_salary", "special_salary", "other_salary", "total_salary","period","change_in_position")
 colnames(salary2017) <- names
@@ -21,7 +21,7 @@ colnames(salary2019) <- names
 
 
 #Load as a list
-file.list <- list.files(pattern='*.xlsx')
+file.list <- list.files(path="./data/salarydata", pattern='*.xlsx')
 df.list <- sapply(file.list, read_excel, simplify=FALSE)
 
 
@@ -78,4 +78,8 @@ salary2017 %>%
   group_by(.dots=grep(pattern="organization", x = colnames(.),
                       value = T, ignore.case = T
   )) %>% tally(sort = T) 
+
+
+#Uncomment below to experiment with easier data visualization
+#esquisser()
 
