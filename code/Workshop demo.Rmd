@@ -9,8 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Installation
 
-```{r echo = FALSE }
-install.packages("dplyr")
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# install.packages("dplyr")
 library(dplyr)
 ```
 
@@ -38,31 +38,10 @@ dat1 <- dat %>% select(name, height, mass) %>%
                 View()
 ```
 
-
-## select()
-
-```{r echo=FALSE}
-# Select by name of columns 
-dat %>% select(name, mass, hair_color) %>% 
-        View()
-
-# Exclude by name 
-dat %>% select(-mass, -hair_color) %>% 
-        View()
-
-# Select by feature 
-dat %>% select(contains("color")) %>% 
-        View()
-dat %>% select(-ends_with("color")) %>% 
-        # opposite is starts_with()
-        View()
-
-# Reorder 
-dat %>% select(name, hair_color, skin_color, everything()) %>% 
-        View()
-```
-
 ## filter() 
+
+Purpose: select a subset of rows in a data frame 
+Structure: filter(tibble/data frame, variable of choice and expression)
 
 ``` {r}
 # Filter for numerical values and character values
@@ -83,33 +62,179 @@ dat %>% filter(!(height >=100)) %>%
         View()
 ``` 
 
+## slice 
+
+Purpose: index rows by their (integer) locations 
+Structure: slice(tibble/data frame, location)
+
+```{r }
+# First 5 rows
+slice(dat, 1:5)
+
+# slice_head() for rows at the top of the df 
+# n refers to amount of desired observations
+slice_head(dat, n = 3)
+
+# slice_tail() for rows at the bottom of the df 
+dat %>% slice_tail(n = 4)
+
+# slice_sample() for random selection 
+# prop for proportion of cases
+dat %>% slice_sample(n = 4) 
+dat %>% slice_sample(prop = 0.1)
+
+# slice_max() for rows with highest values of a variable 
+dat %>% slice_max(height, n = 3)
+
+# slice_min() for rows with lowest values of a variable 
+dat %>% slice_min(mass, n = 3)
+```
+
+
 ## arrange()
+
+Purpose: reorders rows 
+Structure: arrange(df/tibble, variable)
 
 ``` {r}
 # Default is ascending
-dat %>% arrange(mass) %>% 
+dat %>% slice(1:5) %>% 
+        arrange(mass) %>% 
         View()
 
 # Descending 
-dat %>% arrange(desc(mass)) %>% 
+dat %>% slice(1_5 %>% 
+        arrange(desc(mass)) %>% 
         View()
 ``` 
 
 
+
+## select()
+
+Purpose: create a subset of a df by selection of columns 
+Structure: select(dt/tibble, columns of interest)
+
+```{r echo=FALSE}
+dat1 <- slice(dat, 1:5)
+
+# Select by name of columns 
+dat1 %>% select(name, hair_color) %>% 
+        View()
+
+dat1 %>% select(name:hair_color) %>% 
+        View()
+
+# Exclude by name 
+dat1 %>% select(-mass, -hair_color) %>% 
+        View()
+dat1 %>% select(!(mass:hair_color)) %>% 
+        View()
+
+# Select columns by feature 
+dat1 %>% select(contains("color")) %>% 
+        View()
+dat1 %>% select(-ends_with("color")) %>% 
+        # opposite is starts_with()
+        View()
+
+# Rename variables 
+# Not recommended because it drops all other variables 
+dat1 %>% select(fabulous_name = name) %>% 
+        View()
+
+# Reorder 
+dat1 %>% select(name, hair_color, skin_color, everything()) %>% 
+        View()
+```
+
+## rename() 
+Purpose: rename columns
+Structure: rename(df/tibble, new_colname = colname)
+
+```{r}
+dat1 %>% rename(fabulous_name = name) %>% 
+        View()
+```
+
+
 ## mutate() 
+Purpose: add new columns that are functions of existing columns 
+Structure: mutate(new_colname = function)
 
 ``` {r}
 # Constructing a BMI column
-dat$height <- dat$height/100
-dat1 <- dat %>% mutate(BMI = mass/(height^2)) %>% 
-                select(name, BMI, everything()) %>% 
-                View()
+dat1$height <- dat1$height/100
+dat1 %>% mutate(BMI = mass/(height^2)) %>% 
+        select(name, BMI, everything()) 
+
+# transmute() to only keep the new variables
+# Instead of separately preparing the height measure, you can
+# also include it in the function 
+dat1 %>% transmute(
+        height_m = height / 100, 
+        BMI = mass / (height_m^2)
+)
+
+# Unnamed columns 
+dat %>% slice(1:5) %>% 
+        mutate(height + 10) 
 ``` 
+
+
+## relocate() 
+Purpose: change column order
+Structure: relocate(df, variables, .before = variables_after OR .after = variables_before
+
+```{r}
+# Putting height after eye_color 
+dat1 %>% relocate(mass:eye_color, .before = height)
+
+# Putting height before mass
+dat1 %>% relocate(mass:eye_color, .after = height)
+```
+
+## summarise() 
+Purpose: collapse df to a single row 
+Structure: summarise/summarize(df, varname = function)
+
+```{r}
+# Only getting mean height 
+dat1  %>% summarise(
+        mean_height = mean(height, na.rm = TRUE), 
+        mean_mass = mean(mass, na.rm = TRUE)
+        )
+```
 
 ## group_by()
+Purpose: create groups 
+Structure: group_by(df, variable)
 
 ``` {r}
-
-
-
+# Instead of the mean height across all creatues, let's focus mean height
+# for each species 
+dat %>% group_by(species) %>% 
+        select(height, mass) %>% 
+        summarize(
+                mean_height = mean(height, na.rm = TRUE), 
+                mean_mass = mean(mass, na.rm = TRUE)
+        )
 ``` 
+
+## count() 
+Purpose: count the unique values of one or more variables
+Structure: count(df, var) 
+
+```{r}
+# Counting the rows by species 
+dat %>% count(species)
+
+# Alternative way: n() which returns group size 
+dat %>% group_by(species) %>% 
+        summarize(n = n())
+
+# Count the frequency of weights (mass) for each gender
+dat %>% count(gender, wt = mass)
+
+```
+
