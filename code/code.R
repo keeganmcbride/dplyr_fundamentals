@@ -10,9 +10,9 @@ library(esquisse)
 
 #Load one at a time
 
-salary2017 <- read_excel("data/salarydata/2017.xlsx")
-salary2018 <- read_excel("data/salarydata/2018.xlsx")
-salary2019 <- read_excel("data/salarydata/2019.xlsx")
+salary2017 <- read_excel("2017.xlsx")
+salary2018 <- read_excel("2018.xlsx")
+salary2019 <- read_excel("2019.xlsx")
 
 names <- c("organization", "unit", "job", "first_name","last_name","work_percentage","official_salary", "special_salary", "other_salary", "total_salary","period","change_in_position")
 colnames(salary2017) <- names
@@ -21,7 +21,7 @@ colnames(salary2019) <- names
 
 
 #Load as a list
-file.list <- list.files(path="./data/salarydata", pattern='*.xlsx')
+file.list <- list.files(pattern='*.xlsx')
 df.list <- sapply(file.list, read_excel, simplify=FALSE)
 
 
@@ -46,11 +46,11 @@ test <- salary2017 %>% group_by(unit, organization) %>% summarise(n=n(), Mean = 
 #Let's write a function to help us analyze future data
 salary_analysis <- function(.df, .group_vars, .summary_vars) {
  summary_vars <- enquo(.summary_vars)
- andmed <-  .df %>% group_by_at(.group_vars) %>% summarise(n=n(), Average = mean(!!summary_vars, na.rm=T)) %>% arrange(desc(n))
+ andmed <-  .df %>% group_by_at(.group_vars) %>% dplyr::summarise(n=n(), Average = mean(!!summary_vars, na.rm=T)) %>% arrange(desc(n))
  return(andmed)
 }
 
-andmed <- salary_analysis(salary2017, c("organization","job"), total_salary)
+andmed <- salary_analysis(salary2017, c("unit", "job"), total_salary)
 
 
 ## Experiment with joins and anti joins
@@ -83,3 +83,13 @@ salary2017 %>%
 #Uncomment below to experiment with easier data visualization
 #esquisser()
 
+salary_high_low <- salary2017  %>% mutate(work_percentage = case_when(
+  work_percentage == 1 ~ "full time",
+  work_percentage != 1 ~ "part time",
+),
+salary_low_high = case_when(
+  total_salary >= 50000 ~ "High",
+  total_salary < 50000 && total_salary > 30000 ~ "medium",
+  total_salary <= 30000 ~ "low"
+)
+) 
