@@ -21,3 +21,6 @@ income <- read.csv("./code/basic_income_dataset_dalia.csv", enc = "UTF-8")
 
 
 ## Create a summary table for each group based on the previously created column
+
+
+## Write a function that, given any list of variables, will filter and summarize the dataset and return an ordered table.
