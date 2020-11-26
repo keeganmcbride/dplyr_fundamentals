@@ -13,6 +13,8 @@ library(readxl)
 
 ```{r }
 dat <- read_excel("dataset_1.xlsx")
+
+dat <- dataset_1
 ```
 
 ## Data Wrangling
@@ -75,8 +77,8 @@ dat_table <- dat %>% select(1:2, "gdp_pc1970", "gdp_pc2017") %>%
   group_by(countryname) %>% 
   mutate(Growth_rate = ((gdp_pc2017 - gdp_pc1970)/gdp_pc1970)) %>% 
   ungroup() %>% 
-  slice_max(10, Growth_rate) 
+  slice_max(Growth_rate, n = 10) 
 
 # Data presentation 
-kable(dat5a, caption = "Top 10 countries with highest growth rates")
+View(dat_table)
 ```
