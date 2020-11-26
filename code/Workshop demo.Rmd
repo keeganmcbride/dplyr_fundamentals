@@ -45,6 +45,7 @@ Structure: filter(tibble/data frame, variable of choice and expression)
 
 ``` {r}
 # Filter for numerical values and character values
+filter(dat, height >= 100)
 dat %>% filter(height >= 100, 
                eye_color == "yellow") %>% 
         View()
@@ -182,18 +183,6 @@ dat %>% slice(1:5) %>%
 ``` 
 
 
-## relocate() 
-Purpose: change column order
-Structure: relocate(df, variables, .before = variables_after OR .after = variables_before
-
-```{r}
-# Putting height after eye_color 
-dat1 %>% relocate(mass:eye_color, .before = height)
-
-# Putting height before mass
-dat1 %>% relocate(mass:eye_color, .after = height)
-```
-
 ## summarise() 
 Purpose: collapse df to single variables
 Structure: summarise/summarize(df, varname = function)
@@ -248,3 +237,43 @@ dat %>% count(gender, wt = mass)
 
 ```
 
+## EXTRA: grep(), gsub(), gather(), spread() 
+
+``` {r}
+## grep() 
+?grep
+## Structure: grep(pattern, vector)
+grep("blond", dat$hair_color) #length()
+dat[grep("blond", dat$hair_color),]
+dat[,grep("color", colnames(dat))]
+
+
+## gsub() 
+?gsub
+## Structure: gsub(pattern_to_be_replaced, new_pattern, df)
+gsub("brown", "brunette", dat$hair_color)
+
+dat_na <- dat[!(is.na(dat$hair_color)|dat$hair_color == ""),]
+dat_na %>% mutate_at(vars(hair_color), ~gsub("brown", "brunette",.)) %>% 
+        View()
+# What is the tilde sign doing here? Dplyr reserves the use of it 
+# for non-standard evaluation (NSE), i.e. NS functions 
+
+library(tidyr)
+
+## pivot_longer(), formally known as gather()
+?pivot_longer
+dat_long <- dat %>% pivot_longer(cols = ends_with("color"),
+                        names_to = "col", "value") %>% 
+                        select(name, col, value, everything()) 
+View(dat_long)
+
+
+## pivot_wider(), formally known as spread()
+?pivot_wider
+dat_long %>% pivot_wider(names_from = col, 
+                    values_from = value) %>% 
+                    select(name, hair_color, eye_color, 
+                    skin_color, everything()) %>% 
+                    View()
+``` 
