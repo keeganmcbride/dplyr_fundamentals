@@ -1,8 +1,10 @@
-## Packages 
+---
+title: "Solution_task1_econdata"
+output: html_document
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 library(tidyverse)
 library(readxl)
 ```
@@ -64,3 +66,4 @@ base + geom_line(size = 1) +
   x = "Year", y = "GDP per capita") +
   geom_point() + theme_minimal()
 ``` 
+
