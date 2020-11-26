@@ -6,7 +6,7 @@ library(knitr)
 library(readxl)
 library(esquisse)
 
-#setwd("~/coding/dyplr_fundamentals")
+setwd("~/coding/dyplr_fundamentals")
 
 #Load one at a time
 
@@ -40,8 +40,8 @@ salary_combined <- bind_rows(df.list, .id = "id")
 #Let's explore the data a bit
 head(tabyl(salary2017$job) %>% arrange(desc(n)), 10) %>% kable()
 head(tabyl(salary2017$organization) %>% arrange(desc(n)), 10) %>% kable()
-salary2017 %>% count(organization, sort = T)
-test <- salary2017 %>% group_by(unit, organization) %>% summarise(n=n(), Mean = mean(total_salary, na.rm=TRUE)) %>% arrange(desc(n))
+salary2017 %>% dplyr::count(organization, sort = T)
+test <- salary2017 %>% group_by(unit, organization) %>% dplyr::summarise(n=n(), Mean = mean(total_salary, na.rm=TRUE)) %>% arrange(desc(n))
 
 #Let's write a function to help us analyze future data
 salary_analysis <- function(.df, .group_vars, .summary_vars) {
