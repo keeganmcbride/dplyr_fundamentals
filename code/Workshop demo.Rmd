@@ -103,7 +103,7 @@ dat %>% slice(1:5) %>%
         View()
 
 # Descending 
-dat %>% slice(1_5 %>% 
+dat %>% slice(1:5) %>% 
         arrange(desc(mass)) %>% 
         View()
 ``` 
@@ -195,7 +195,7 @@ dat1 %>% relocate(mass:eye_color, .after = height)
 ```
 
 ## summarise() 
-Purpose: collapse df to a single row 
+Purpose: collapse df to single variables
 Structure: summarise/summarize(df, varname = function)
 
 ```{r}
@@ -204,6 +204,16 @@ dat1  %>% summarise(
         mean_height = mean(height, na.rm = TRUE), 
         mean_mass = mean(mass, na.rm = TRUE)
         )
+
+# Variation: summarise_at() to affect variables selected with a 
+# character vector or vars()
+dat %>% summarise_at(vars(c(2, 7)), mean, na.rm = TRUE)
+dat %>% summarise_at("mass", mean, na.rm = TRUE)
+dat %>% summarise_at(vars(height:mass), mean, na.rm = TRUE)
+
+# Variation: summarise_if() affects variables selected with a 
+# predicate function 
+dat %>% summarise_if(is.numeric, mean, na.rm = TRUE)
 ```
 
 ## group_by()
