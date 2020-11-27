@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Installation
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
-# install.packages("dplyr")
+#install.packages("dplyr")
 library(dplyr)
 ```
 
@@ -61,6 +61,8 @@ dat %>% filter(hair_color %in% c("blond", "brown")) %>%
 # Filter out cases
 dat %>% filter(!(height >=100)) %>% 
         View()
+
+# Exercise: orange eye_color 
 ``` 
 
 ## slice 
@@ -89,6 +91,9 @@ dat %>% slice_max(height, n = 3)
 
 # slice_min() for rows with lowest values of a variable 
 dat %>% slice_min(mass, n = 3)
+
+# Exercise: return Han Solo's stats (14) using slice() and his birth year 
+# using dat[rows, columns]
 ```
 
 
@@ -107,6 +112,8 @@ dat %>% slice(1:5) %>%
 dat %>% slice(1:5) %>% 
         arrange(desc(mass)) %>% 
         View()
+
+# Exercise: using the subsetted dataframe and arrange(), who has the highest birth year?
 ``` 
 
 
@@ -203,6 +210,8 @@ dat %>% summarise_at(vars(height:mass), mean, na.rm = TRUE)
 # Variation: summarise_if() affects variables selected with a 
 # predicate function 
 dat %>% summarise_if(is.numeric, mean, na.rm = TRUE)
+
+# Exercise: what is the mean BMI? 
 ```
 
 ## group_by()
@@ -234,6 +243,8 @@ dat %>% group_by(species) %>%
 
 # Count the frequency of weights (mass) for each gender
 dat %>% count(gender, wt = mass)
+
+# Exercise: which hair color is most prevalent?
 
 ```
 
