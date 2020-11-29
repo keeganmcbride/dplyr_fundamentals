@@ -6,7 +6,7 @@ library(knitr)
 library(readxl)
 library(esquisse)
 
-setwd("~/coding/dyplr_fundamentals")
+setwd("~/coding/dplyr_fundamentals")
 
 #Load one at a time
 
@@ -26,13 +26,13 @@ df.list <- sapply(file.list, read_excel, simplify=FALSE)
 
 
 #This is just to show what the less nice col look like
-compare_df_cols(df.list)
+#compare_df_cols(df.list)
 
 #Clean up the column names
-df.list <- lapply(df.list, clean_names)
+#df.list <- lapply(df.list, clean_names)
 
 #Double check that all the columns are the same
-compare_df_cols(df.list)
+#compare_df_cols(df.list)
 
 #Bind together data
 salary_combined <- bind_rows(df.list, .id = "id")
@@ -88,8 +88,13 @@ salary_high_low <- salary2017  %>% mutate(work_percentage = case_when(
   work_percentage != 1 ~ "part time",
 ),
 salary_low_high = case_when(
-  total_salary >= 50000 ~ "High",
-  total_salary < 50000 && total_salary > 30000 ~ "medium",
-  total_salary <= 30000 ~ "low"
+  total_salary < 30000 ~ "low",
+  total_salary > 30000 & total_salary < 50000 ~ "medium",
+  total_salary >= 50000 ~ "high"
+
 )
-) 
+)
+
+
+low_sal <- salary_high_low %>% filter(salary_low_high == "medium")
+
