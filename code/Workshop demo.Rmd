@@ -63,6 +63,7 @@ dat %>% filter(!(height >=100)) %>%
         View()
 
 # Exercise: orange eye_color 
+dat %>% filter(eye_color == "orange") %>% View()
 ``` 
 
 ## slice 
@@ -71,6 +72,8 @@ Purpose: index rows by their (integer) locations
 Structure: slice(tibble/data frame, location)
 
 ```{r }
+# dat[rows, column]
+
 # First 5 rows
 slice(dat, 1:5)
 
@@ -92,8 +95,8 @@ dat %>% slice_max(height, n = 3)
 # slice_min() for rows with lowest values of a variable 
 dat %>% slice_min(mass, n = 3)
 
-# Exercise: return Han Solo's stats (14) using slice() and his birth year 
-# using dat[rows, columns]
+# Exercise: return Han Solo's stats (14) using slice() 
+dat %>% slice(14)
 ```
 
 
